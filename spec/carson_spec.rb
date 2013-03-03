@@ -1,11 +1,10 @@
 require 'carson'
 
-@test_rules = <<END_OF_RULES
+TEST_RULES = <<END_OF_RULES
 rule :one do
     triggered_by :channel1
     on_message do |message|
         data = "Hi, this is rule 1 with message: \#{message}"
-        puts data
         publish :channel2, data
         store[:test_result_1][:key] = message
     end
@@ -14,8 +13,6 @@ end
 rule :two do
     triggered_by :channel2
     on_message do |message|
-        data = "Hi, this is rule 2 with message: \#{message}"
-        puts data
         store[:test_result_2] = message
     end
 end
@@ -162,8 +159,37 @@ describe Carson do
         end
     end
 
-    describe "rule loading" do
+    describe "spin up and run" do
         before do
+            subject.redis.should_receive(:get).with("mc_rules") { TEST_RULES }.at_least(:once)
+        end
+
+        describe "rule loading" do
+            before do
+                subject.rules.clear
+            end
+
+            it "loads the two test rules" do
+                subject.rules.size.should == 0
+                subject.load_rules
+                subject.rules.size.should == 2
+                subject.load_rules
+                subject.rules.size.should == 2
+            end
+
+            it "should run first rule correctly" do
+                subject.load_rules
+                subject.redis.should_receive(:publish).with(:channel2, "Hi, this is rule 1 with message: the data")
+                subject.redis.should_receive(:hset).with("test_result_1", "key", "the data")
+                subject.dispatch(:channel1, "the data")
+            end
+        end
+
+        describe "subscribe and wait" do
+            it "clears, reloads, and subscribes on launch" do
+                subject.redis.stub(:subscribe).with([:mc_control, :channel1, :channel2]) { subject.run = false }
+                subject.launch
+            end
         end
     end
 end

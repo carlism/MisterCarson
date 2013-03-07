@@ -1,6 +1,8 @@
-require "singleton"
+require "logger"
 require "redis"
 require "store"
+require "rule"
+require "singleton"
 
 class Carson
     include Singleton
@@ -43,7 +45,7 @@ class Carson
     end
 
     def publish(channel, message)
-        redis.publish(channel, message)
+        redis.publish(channel.to_s, message)
     end
 
     def store
@@ -62,6 +64,7 @@ class Carson
 
     def quit
         @run = false
+        redis.unsubscribe
     end
 
     def launch
@@ -78,7 +81,7 @@ class Carson
                     @log.info "Unsubscribed from ##{channel} (#{subscriptions} subscriptions)"
                 end
             end
-            load_rules
+            load_rules if @run
         end
     end
 end

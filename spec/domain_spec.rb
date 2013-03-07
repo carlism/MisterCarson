@@ -16,7 +16,7 @@ describe "HomeDomain" do
     it "turns on the floods when I turn on the side light" do
         subject.load_rules
         subject.redis.should_receive(:hget).with("zw_node:02:1234", "v_Basic") { "1" }
-        subject.redis.should_receive(:publish).with(:zw_turn_on_node, "zw_node:02:3456")
-        subject.dispatch(:zw_value_update, "zw_value:02:1234:valueId")
+        subject.redis.should_receive(:publish).with("zw_turn_on_node", "zw_node:02:3456")
+        subject.dispatch("zw_value_update", "zw_value:02:1234:valueId")
     end
 end

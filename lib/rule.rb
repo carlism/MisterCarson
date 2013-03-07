@@ -10,7 +10,7 @@ class Rule
     end
 
     def triggered_by(event_channel)
-        @event_channel = event_channel
+        @event_channel = event_channel.to_s
     end
 
     def on_message(&blk)

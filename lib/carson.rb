@@ -45,7 +45,7 @@ class Carson
     end
 
     def publish(channel, message)
-        redis.publish(channel.to_s, message)
+        Redis.new.publish(channel.to_s, message)
     end
 
     def store

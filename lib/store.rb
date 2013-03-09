@@ -1,5 +1,7 @@
+require 'redis'
+
 class Store
-    def initialize(redis)
+    def initialize(redis=Redis.new)
         @redis = redis
     end
 

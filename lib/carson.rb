@@ -12,7 +12,7 @@ class Carson
     attr_accessor :run
 
     def initialize
-        @redis = Redis.new
+        @redis = Redis.new :logger => Logger.new(STDOUT)
         @base_rules = []
         @rules = []
         @run = true
@@ -36,9 +36,8 @@ class Carson
     end
 
     def dispatch(channel, message)
-        @log.info "Received message on #{channel}"
         matching_rules = (@base_rules + @rules).select{ |r| r.event_channel==channel }
-        @log.debug "Dispatching message to #{matching_rules.size} rules"
+        # @log.debug "Dispatching message on channel #{channel} to #{matching_rules.size} rules"
         matching_rules.each do |rule|
             rule.trigger(message)
         end
@@ -49,7 +48,7 @@ class Carson
     end
 
     def store
-        return Store.new(redis)
+        return Store.new
     end
 
     def reload

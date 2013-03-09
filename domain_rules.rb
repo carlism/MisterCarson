@@ -48,10 +48,10 @@ rule :switch_floods_with_door do
             state = store[id.zw_node_key][:v_Basic].value
             floods = ZwaveId.new(@nodes["Flood Lights"])
             @log.debug "matched node, state #{state.inspect}"
-            if state == "0"
-                publish :zw_turn_off_node, "#{floods.home}:#{floods.node}"
-            else
+            if state == "1"
                 publish :zw_turn_on_node, "#{floods.home}:#{floods.node}"
+            else
+                publish :zw_turn_off_node, "#{floods.home}:#{floods.node}"
             end
         end
     end

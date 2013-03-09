@@ -100,7 +100,7 @@ describe Carson do
             subject.rule :test_rule do
                 triggered_by :mc_write
                 on_message do |message|
-                    test_result = store[:some_key].value
+                    test_result = store[:some_key]
                 end
             end
             subject.redis.should_receive(:get).with("some_key") { "the data returned" }
@@ -124,7 +124,7 @@ describe Carson do
             subject.rule :test_rule do
                 triggered_by :mc_write
                 on_message do |message|
-                    test_result = store[:some_key][:some_field].value
+                    test_result = store[:some_key][:some_field]
                 end
             end
             subject.redis.should_receive(:hget).with("some_key", "some_field") { "the return data" }

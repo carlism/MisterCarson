@@ -1,3 +1,4 @@
+require "logger"
 require "singleton"
 require "redis"
 require "store"

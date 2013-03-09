@@ -19,6 +19,10 @@ class Store
             @key = key
             @value = value
         end
+
+        def ==(other)
+            value==other
+        end
     end
 
     class StoreHash < StoreData
@@ -37,6 +41,10 @@ class Store
 
         def value
             @redis.get(@key.to_s)
+        end
+
+        def ==(other)
+            value==other
         end
 
         def increment(by="1")

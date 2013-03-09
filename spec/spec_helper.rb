@@ -15,3 +15,12 @@ RSpec.configure do |config|
   #     --seed 1234
   config.order = 'random'
 end
+
+class Object
+    def self.any_should_receive(method)
+        the_any_class = self
+        the_any_class.stub(:call_validator)
+        the_any_class.any_instance.stub(method){ |*args| the_any_class.call_validator(*args) }
+        the_any_class.should_receive(:call_validator)
+    end
+end

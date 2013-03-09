@@ -2,6 +2,8 @@ require "logger"
 require "singleton"
 require "redis"
 require "store"
+require "rule"
+require "singleton"
 
 class Carson
     include Singleton
@@ -11,7 +13,7 @@ class Carson
     attr_accessor :run
 
     def initialize
-        @redis = Redis.new
+        @redis = Redis.new :logger => Logger.new(STDOUT)
         @base_rules = []
         @rules = []
         @run = true
@@ -35,20 +37,19 @@ class Carson
     end
 
     def dispatch(channel, message)
-        @log.info "Received message on #{channel}"
         matching_rules = (@base_rules + @rules).select{ |r| r.event_channel==channel }
-        @log.debug "Dispatching message to #{matching_rules.size} rules"
+        # @log.debug "Dispatching message on channel #{channel} to #{matching_rules.size} rules"
         matching_rules.each do |rule|
             rule.trigger(message)
         end
     end
 
     def publish(channel, message)
-        redis.publish(channel, message)
+        Redis.new.publish(channel.to_s, message)
     end
 
     def store
-        return Store.new(redis)
+        return Store.new
     end
 
     def reload
@@ -63,6 +64,7 @@ class Carson
 
     def quit
         @run = false
+        redis.unsubscribe
     end
 
     def launch
@@ -79,7 +81,7 @@ class Carson
                     @log.info "Unsubscribed from ##{channel} (#{subscriptions} subscriptions)"
                 end
             end
-            load_rules
+            load_rules if @run
         end
     end
 end

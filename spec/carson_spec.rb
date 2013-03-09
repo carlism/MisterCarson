@@ -29,7 +29,7 @@ describe Carson do
                 run_string += "eval_rules_in #{name}"
             end
             subject.rules.size.should be 1
-            subject.rules[0].event_channel.should be :evt_q
+            subject.rules[0].event_channel.should == "evt_q"
             run_string.should == "xeval_rules_in test_rule"
         end
     end
@@ -49,7 +49,7 @@ describe Carson do
     describe "rule dispatch" do
         it "should dispatch a message to the control rule" do
             subject.should_receive :sit
-            subject.dispatch(:mc_control, "sit")
+            subject.dispatch("mc_control", "sit")
         end
 
         it "should dispatch a message to both the base_rules and the user rules" do
@@ -60,7 +60,7 @@ describe Carson do
                 end
             end
             subject.should_receive(:sit).twice
-            subject.dispatch(:mc_control, "sit")
+            subject.dispatch("mc_control", "sit")
         end
     end
 
@@ -80,8 +80,8 @@ describe Carson do
                     publish :test_channel, message
                 end
             end
-            subject.redis.should_receive(:publish).with(:test_channel, "the data")
-            subject.dispatch(:mc_repeater, "the data")
+            subject.redis.should_receive(:publish).with("test_channel", "the data")
+            subject.dispatch("mc_repeater", "the data")
         end
 
         it "supports saving individual values" do
@@ -92,7 +92,7 @@ describe Carson do
                 end
             end
             subject.redis.should_receive(:put).with("some_key", "the data")
-            subject.dispatch(:mc_write, "the data")
+            subject.dispatch("mc_write", "the data")
         end
 
         it "supports reading individual values" do
@@ -104,7 +104,7 @@ describe Carson do
                 end
             end
             subject.redis.should_receive(:get).with("some_key") { "the data returned" }
-            subject.dispatch(:mc_write, "the data")
+            subject.dispatch("mc_write", "the data")
             test_result.should == "the data returned"
         end
 
@@ -116,7 +116,7 @@ describe Carson do
                 end
             end
             subject.redis.should_receive(:hset).with("some_key", "some_field", "the data")
-            subject.dispatch(:mc_write, "the data")
+            subject.dispatch("mc_write", "the data")
         end
 
         it "supports reading hash values" do
@@ -128,7 +128,7 @@ describe Carson do
                 end
             end
             subject.redis.should_receive(:hget).with("some_key", "some_field") { "the return data" }
-            subject.dispatch(:mc_write, "the data")
+            subject.dispatch("mc_write", "the data")
             test_result.should == "the return data"
         end
 
@@ -141,7 +141,7 @@ describe Carson do
                 end
             end
             subject.redis.should_receive(:incrby).with("some_key", "1") { "43" }
-            subject.dispatch(:mc_write, "the data")
+            subject.dispatch("mc_write", "the data")
             test_result.should == "43"
         end
 
@@ -154,7 +154,7 @@ describe Carson do
                 end
             end
             subject.redis.should_receive(:decrby).with("some_key", "1") { "41" }
-            subject.dispatch(:mc_write, "the data")
+            subject.dispatch("mc_write", "the data")
             test_result.should == "41"
         end
     end
@@ -179,15 +179,15 @@ describe Carson do
 
             it "should run first rule correctly" do
                 subject.load_rules
-                subject.redis.should_receive(:publish).with(:channel2, "Hi, this is rule 1 with message: the data")
+                subject.redis.should_receive(:publish).with("channel2", "Hi, this is rule 1 with message: the data")
                 subject.redis.should_receive(:hset).with("test_result_1", "key", "the data")
-                subject.dispatch(:channel1, "the data")
+                subject.dispatch("channel1", "the data")
             end
         end
 
         describe "subscribe and wait" do
             it "clears, reloads, and subscribes on launch" do
-                subject.redis.stub(:subscribe).with([:mc_control, :channel1, :channel2]) { subject.run = false }
+                subject.redis.stub(:subscribe).with(["mc_control", "channel1", "channel2"]) { subject.run = false }
                 subject.launch
             end
         end

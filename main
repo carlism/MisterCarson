@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+$:.unshift File.join(File.dirname(__FILE__), "lib")
+$stdout.sync = true
+
+require "carson"
+
+Carson.instance.launch

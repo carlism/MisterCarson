@@ -17,4 +17,14 @@ namespace :rules do
     end
 end
 
+namespace :carson do
+    require "redis"
+
+    desc "get carson to shutdown gracefully"
+    task :quit do |t|
+        redis = Redis.new
+        redis.publish "mc_control", "quit"
+    end
+end
+
 

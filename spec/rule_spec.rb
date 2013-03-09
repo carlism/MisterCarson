@@ -9,7 +9,7 @@ describe Rule do
 
     it "gets to know how it's triggered" do
         subject.triggered_by :some_event
-        subject.event_channel.should be :some_event
+        subject.event_channel.should == "some_event"
     end
 
     it "lets you define a call-back for the trigger" do

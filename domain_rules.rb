@@ -40,18 +40,34 @@ redis.keys("zw_node:*").each do |node_key|
     @nodes[store[node_key][:nodeName].value] = node_key
 end
 
-rule :switch_floods_with_door do
-    triggered_by :zw_value_update
+# rule :switch_floods_with_door do
+#     triggered_by :zw_value_update
+#     on_message do |message|
+#         id = ZwaveId.new(message)
+#         if id.zw_node_key == @nodes["Side Door Light"]
+#             state = store[id.zw_node_key][:v_Basic].value
+#             floods = ZwaveId.new(@nodes["Flood Lights"])
+#             if state.to_i > 0
+#                 publish :zw_turn_on_node, "#{floods.home}:#{floods.node}"
+#             else
+#                 publish :zw_turn_off_node, "#{floods.home}:#{floods.node}"
+#             end
+#         end
+#     end
+# end
+
+rule :outside_lights_with_car_signal do
+    triggered_by :gpio_17
     on_message do |message|
-        id = ZwaveId.new(message)
-        if id.zw_node_key == @nodes["Side Door Light"]
-            state = store[id.zw_node_key][:v_Basic].value
-            floods = ZwaveId.new(@nodes["Flood Lights"])
+        if message.to_i > 0
+            light = ZwaveId.new(@nodes["Side Door Light"])
+            state = store[light.zw_node_key][:v_Basic].value
             if state.to_i > 0
-                publish :zw_turn_on_node, "#{floods.home}:#{floods.node}"
+                publish :zw_turn_off_node, "#{light.home}:#{light.node}"
             else
-                publish :zw_turn_off_node, "#{floods.home}:#{floods.node}"
+                publish :zw_turn_on_node, "#{light.home}:#{light.node}"
             end
         end
     end
 end
+

@@ -1,4 +1,5 @@
 require 'rule'
+require 'spec_helper'
 
 describe Rule do
     subject { Rule.new(:test_rule) }

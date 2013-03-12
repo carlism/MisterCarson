@@ -1,4 +1,5 @@
 require "logger"
+require "singleton"
 require "redis"
 require "store"
 require "rule"
@@ -37,7 +38,6 @@ class Carson
 
     def dispatch(channel, message)
         matching_rules = (@base_rules + @rules).select{ |r| r.event_channel==channel }
-        # @log.debug "Dispatching message on channel #{channel} to #{matching_rules.size} rules"
         matching_rules.each do |rule|
             rule.trigger(message)
         end

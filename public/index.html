@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html ng-app="carsonApp">
+<head>
+<meta charset="utf-8">
+<title>MisterCarson</title>
+<link rel="stylesheet" href="stylesheet/blueprint/screen.css" type="text/css"/>
+<script src="javascript/angular-1.0.5/angular.min.js"></script>
+<script src="javascript/angular-1.0.5/angular-resource.min.js"></script>
+<script type="text/javascript">
+var carsonApp = angular.module('carsonApp', ['ngResource']);
+
+carsonApp.controller('NodesController', function($scope, $resource) {
+    $scope.Nodes = $resource('http://192.168.1.2\\:4567/node/:nodeId', {nodeId:'@nodeKey'},
+        {
+            'on':   {method:'POST', params:{operation:'on'}},
+            'off':  {method:'POST', params:{operation:'off'}},
+            'set':  {method:'POST', params:{operation:'set'}}
+        });
+    $scope.nodes = $scope.Nodes.query();
+
+    $scope.picknode = function() {
+        $scope.node = $scope.Nodes.get({nodeId:$scope.selected_node.key});
+    }
+
+    $scope.set_name = function() {
+        var name=prompt("Please enter a new name:",$scope.node.nodeName);
+        $scope.node.$set({field:'name',value:name});
+    }
+
+    $scope.showDetails = false;
+});
+
+</script>
+</head>
+
+<body>
+
+<div ng-controller="NodesController" class="container">
+  <div class="span-4 border">
+    <select size="20" ng-model="selected_node" ng-change="picknode()" ng-options="node.name || node.key for node in nodes"></select>
+    <div>
+      <button ng-click="node.$on()">On</button>
+      <button ng-click="node.$off()">Off</button>
+    </div>
+  </div>
+  <div class="span-20 last">
+    Node: <strong>{{selected_node.key}}</strong><br/>
+    Name: <strong>{{node.nodeName}}</strong><br/>
+    Type: <strong>{{node.type}}</strong><br/>
+    State: <strong>{{node.v_Basic}}</strong><br/>
+    <button ng-click="set_name()">Set Name</button>
+    <button ng-click="showDetails=!showDetails">toggle details</button>
+    <div ng-show="showDetails">
+    <table>
+        <tr ng-repeat="(key, value) in node">
+            <td>{{key}}</td>
+            <td>{{value}}</td>
+        </tr>
+    </table>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

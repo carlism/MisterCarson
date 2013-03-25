@@ -3,7 +3,6 @@ require "singleton"
 require "redis"
 require "store"
 require "rule"
-require "singleton"
 
 class Carson
     include Singleton

@@ -27,6 +27,11 @@ carsonApp.controller('NodesController', function($scope, $resource) {
         $scope.node.$set({field:'name',value:name});
     }
 
+    $scope.set_location = function() {
+        var location=prompt("Please enter a new location:",$scope.node.nodeLocation);
+        $scope.node.$set({field:'location',value:location});
+    }
+
     $scope.showDetails = false;
 });
 
@@ -46,9 +51,11 @@ carsonApp.controller('NodesController', function($scope, $resource) {
   <div class="span-20 last">
     Node: <strong>{{selected_node.key}}</strong><br/>
     Name: <strong>{{node.nodeName}}</strong><br/>
+    Location: <strong>{{node.nodeLocation}}</strong><br/>
     Type: <strong>{{node.type}}</strong><br/>
     State: <strong>{{node.v_Basic}}</strong><br/>
     <button ng-click="set_name()">Set Name</button>
+    <button ng-click="set_location()">Set Location</button>
     <button ng-click="showDetails=!showDetails">toggle details</button>
     <div ng-show="showDetails">
     <table>

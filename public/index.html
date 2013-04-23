@@ -10,7 +10,7 @@
 var carsonApp = angular.module('carsonApp', ['ngResource']);
 
 carsonApp.controller('NodesController', function($scope, $resource) {
-    $scope.Nodes = $resource('http://192.168.1.2\\:4567/node/:nodeId', {nodeId:'@nodeKey'},
+    $scope.Nodes = $resource('/node/:nodeId', {nodeId:'@nodeKey'},
         {
             'on':   {method:'POST', params:{operation:'on'}},
             'off':  {method:'POST', params:{operation:'off'}},

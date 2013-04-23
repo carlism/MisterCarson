@@ -60,9 +60,11 @@ rule :outside_lights_with_car_signal do
     triggered_by :gpio_17
     on_message do |message|
         if message.to_i > 0
-            state = store[light.zw_node_key][:v_Basic].value
+            side_door_light = ZwaveId.new(@nodes["Side Door Light"])
+            front_door_light = ZwaveId.new(@nodes["Front Door Light"])
+            state = store[side_door_light.zw_node_key][:v_Basic].value
             message = (state.to_i > 0) ? :zw_turn_off_node : :zw_turn_on_node
-            [ZwaveId.new(@nodes["Side Door Light"]), ZwaveId.new(@nodes["Front Door Light"])].each do |light|
+            [side_door_light, front_door_light].each do |light|
                 publish message, "#{light.home}:#{light.node}"
             end
         end

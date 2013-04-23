@@ -40,6 +40,9 @@ carsonApp.controller('NodesController', function($scope, $resource) {
 
 <body>
 
+<a href="index.html">Home</a> |
+<a href="rules.html">Rules</a>
+
 <div ng-controller="NodesController" class="container">
   <div class="span-4 border">
     <select size="20" ng-model="selected_node" ng-change="picknode()" ng-options="node.name || node.key for node in nodes"></select>

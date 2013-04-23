@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html ng-app="carsonApp">
+<head>
+<meta charset="utf-8">
+<title>MisterCarson</title>
+<link rel="stylesheet" href="stylesheet/blueprint/screen.css" type="text/css"/>
+<script src="javascript/angular-1.0.5/angular.min.js"></script>
+<script src="javascript/angular-1.0.5/angular-resource.min.js"></script>
+<script type="text/javascript">
+var carsonApp = angular.module('carsonApp', ['ngResource']);
+
+carsonApp.controller('RulesController', function($scope, $resource) {
+    $scope.Rules = $resource('/rules', {}, {});
+    $scope.rules = $scope.Rules.query();
+});
+
+</script>
+</head>
+
+<body>
+
+<a href="index.html">Home</a> |
+<a href="rules.html">Rules</a>
+
+<div ng-controller="RulesController" class="container">
+  <div class="span-4 border">
+    <textarea ng-model="rules"></textarea>
+  </div>
+</div>
+
+</body>
+</html>

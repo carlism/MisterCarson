@@ -34,3 +34,8 @@ post '/node/:nodeId' do
   end
 end
 
+get '/rules' do
+  content_type :json
+  redis = Redis.new
+  { :rules => redis.get("mc_rules")}.to_json
+end

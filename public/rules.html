@@ -11,7 +11,9 @@ var carsonApp = angular.module('carsonApp', ['ngResource']);
 
 carsonApp.controller('RulesController', function($scope, $resource) {
     $scope.Rules = $resource('/rules', {}, {});
-    $scope.rules = $scope.Rules.query();
+    var obj = $scope.Rules.get({},  function() {
+        $scope.rules = obj.rules;
+    });
 });
 
 </script>
@@ -24,7 +26,7 @@ carsonApp.controller('RulesController', function($scope, $resource) {
 
 <div ng-controller="RulesController" class="container">
   <div class="span-4 border">
-    <textarea ng-model="rules"></textarea>
+    <textarea ng-model="rules" name="rules" id="rules"></textarea>
   </div>
 </div>
 

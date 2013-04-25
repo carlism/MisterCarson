@@ -12,7 +12,7 @@ get '/node' do
   content_type :json
   redis = Redis.new
   redis.keys("zw_node:*").map { |key|
-    {key: key, name: redis.hget(key, "nodeName")}
+    {key: key, name: redis.hget(key, "nodeName"), v_Basic: redis.hget(key, "v_Basic")}
   }.to_json
 end
 

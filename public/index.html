@@ -16,15 +16,20 @@ carsonApp.controller('NodesController', function($scope, $resource) {
             'off':  {method:'POST', params:{operation:'off'}},
             'set':  {method:'POST', params:{operation:'set'}}
         });
-    $scope.nodes = $scope.Nodes.query();
 
-    $scope.picknode = function() {
-        $scope.node = $scope.Nodes.get({nodeId:$scope.selected_node.key});
+    $scope.loadNodes = function() {
+        $scope.nodes = $scope.Nodes.query();
+    }
+
+    $scope.show_node = function(evt) {
+        $scope.selected_key = evt.srcElement.getAttribute('data-key')
+        $scope.node = $scope.Nodes.get({nodeId:$scope.selected_key});
     }
 
     $scope.set_name = function() {
         var name=prompt("Please enter a new name:",$scope.node.nodeName);
         $scope.node.$set({field:'name',value:name});
+        $scope.loadNodes();
     }
 
     $scope.set_location = function() {
@@ -32,6 +37,13 @@ carsonApp.controller('NodesController', function($scope, $resource) {
         $scope.node.$set({field:'location',value:location});
     }
 
+    $scope.button_style = function(node) {
+        if (node.v_Basic > 0)
+            return { "font-weight" : "bold" };
+        return {};
+    }
+
+    $scope.loadNodes();
     $scope.showDetails = false;
 });
 
@@ -45,14 +57,16 @@ carsonApp.controller('NodesController', function($scope, $resource) {
 
 <div ng-controller="NodesController" class="container">
   <div class="span-4 border">
-    <select size="20" ng-model="selected_node" ng-change="picknode()" ng-options="node.name || node.key for node in nodes"></select>
+    <div ng-repeat="node in nodes">
+        <button ng-click="show_node($event)" data-key="{{node.key}}" ng-style="button_style(node)">{{node.name || node.key}}</button>
+    </div>
     <div>
-      <button ng-click="node.$on()">On</button>
-      <button ng-click="node.$off()">Off</button>
+      <button ng-click="node.$on(); $scope.loadNodes();">On</button>
+      <button ng-click="node.$off(); $scope.loadNodes();">Off</button>
     </div>
   </div>
   <div class="span-20 last">
-    Node: <strong>{{selected_node.key}}</strong><br/>
+    Node: <strong>{{selected_key}}</strong><br/>
     Name: <strong>{{node.nodeName}}</strong><br/>
     Location: <strong>{{node.nodeLocation}}</strong><br/>
     Type: <strong>{{node.type}}</strong><br/>
